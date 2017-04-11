@@ -56,7 +56,7 @@ class MPR121:
     def _write_register_byte(self, register, value):
         # Write a byte value to the specifier register address.
         with self._i2c:
-            self._i2c.writeto(bytes([register, value]))
+            self._i2c.write(bytes([register, value]))
 
     def _read_register_bytes(self, register, result, length=None):
         # Read the specified register address and fill the specified result byte
@@ -65,8 +65,8 @@ class MPR121:
         if length is None:
             length = len(result)
         with self._i2c:
-            self._i2c.writeto(bytes([register]), stop=False)
-            self._i2c.readfrom_into(result, start=0, end=length)
+            self._i2c.write(bytes([register]), stop=False)
+            self._i2c.read_into(result, start=0, end=length)
 
     def reset(self):
         """Reset the MPR121 into a default state ready to detect touch inputs.
