@@ -5,13 +5,8 @@
 import time
 
 import board
-import nativeio
-
-# Uncomment _one_ of the following lines depending on how your board supports I2C.
-# For hardare I2C (SAMD21/M0 boards):
-import nativeio as io
-# For software I2C (ESP8266):
-#import bitbangio as io
+import busio
+import pulseio
 
 # Import MPR121 module.
 import adafruit_mpr121
@@ -36,7 +31,7 @@ NOTE_FREQS = [ 261,  # Input 0 = 261 hz = middle C
 
 
 # Create I2C bus.
-i2c = io.I2C(board.SCL, board.SDA)
+i2c = busio.I2C(board.SCL, board.SDA)
 
 # Create MPR121 class.
 mpr121 = adafruit_mpr121.MPR121(i2c)
@@ -44,7 +39,7 @@ mpr121 = adafruit_mpr121.MPR121(i2c)
 #mpr121 = adafruit_mpr121.MPR121(i2c, address=0x91)
 
 # Setup buzzer PWM output.
-buzzer = nativeio.PWMOut(BUZZER_PIN, duty_cycle=TONE_OFF_DUTY, frequency=440,
+buzzer = pulseio.PWMOut(BUZZER_PIN, duty_cycle=TONE_OFF_DUTY, frequency=440,
                          variable_frequency=True)
 
 # Main loop.

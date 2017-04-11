@@ -7,15 +7,11 @@ import time
 # Import MPR121 module.
 import adafruit_mpr121
 
-# Uncomment _one_ of the following lines depending on how your board supports I2C.
-# For hardare I2C (SAMD21/M0 boards):
-import nativeio as io
-# For software I2C (ESP8266):
-#import bitbangio as io
+import busio
 
 # Create I2C bus.
 import board
-i2c = io.I2C(board.SCL, board.SDA)
+i2c = busio.I2C(board.SCL, board.SDA)
 
 # Create MPR121 class.
 mpr121 = adafruit_mpr121.MPR121(i2c)
