@@ -66,7 +66,7 @@ class MPR121:
             length = len(result)
         with self._i2c:
             self._i2c.write(bytes([register]), stop=False)
-            self._i2c.read_into(result, start=0, end=length)
+            self._i2c.readinto(result, start=0, end=length)
 
     def reset(self):
         """Reset the MPR121 into a default state ready to detect touch inputs.
