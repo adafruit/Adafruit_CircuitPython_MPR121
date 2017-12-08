@@ -2,12 +2,28 @@
 # code from: https://github.com/adafruit/Adafruit_Python_MPR121/
 # Author: Tony DiCola
 # License: MIT License (https://opensource.org/licenses/MIT)
+
+"""
+`adafruit_mpr121`
+====================================================
+
+CircuitPython driver for the MPR121 capacitive touch breakout board.
+
+See usage in the examples/simpletest.py file.
+
+* Author(s): Tony DiCola
+"""
+
 import time
 
 import adafruit_bus_device.i2c_device as i2c_device
+from micropython import const
 
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X.git"
 
 # Register addresses.  Unused registers commented out to save memory.
+# pylint: disable=bad-whitespace
 MPR121_I2CADDR_DEFAULT = const(0x5A)
 MPR121_TOUCHSTATUS_L   = const(0x00)
 #MPR121_TOUCHSTATUS_H   = const(0x01)
@@ -44,9 +60,11 @@ MPR121_ECR             = const(0x5E)
 #MPR121_GPIOCLR         = const(0x79)
 #MPR121_GPIOTOGGLE      = const(0x7A)
 MPR121_SOFTRESET       = const(0x80)
+# pylint: enable=bad-whitespace
 
 
 class MPR121:
+    """Driver for the MPR121 capacitive touch breakout board."""
 
     def __init__(self, i2c, address=MPR121_I2CADDR_DEFAULT):
         self._i2c = i2c_device.I2CDevice(i2c, address)
@@ -79,7 +97,7 @@ class MPR121:
         # Check CDT, SFI, ESI configuration is at default values.
         self._read_register_bytes(MPR121_CONFIG2, self._buffer, 1)
         if self._buffer[0] != 0x24:
-           raise RuntimeError('Failed to find MPR121 in expected config state!')
+            raise RuntimeError('Failed to find MPR121 in expected config state!')
         self.set_thresholds(12, 6)
         # Configure baseline filtering control registers.
         self._write_register_byte(MPR121_MHDR, 0x01)
@@ -143,5 +161,5 @@ class MPR121:
         """
         if pin < 0 or pin > 11:
             raise ValueError('Pin must be a value 0-11.')
-        t = self.touched()
-        return (t & (1 << pin)) > 0
+        touches = self.touched()
+        return (touches & (1 << pin)) > 0
