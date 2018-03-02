@@ -28,7 +28,7 @@ Table of Contents
 
     Adafruit 12-Key Capacitive Touch Sensor Breakout - MPR121  <https://www.adafruit.com/product/1982>
 
-   Adafruit 12 x Capacitive Touch Shield for Arduino - MPR121  <https://www.adafruit.com/product/2024>
+    Adafruit 12 x Capacitive Touch Shield for Arduino - MPR121  <https://www.adafruit.com/product/2024>
 
 .. toctree::
     :caption: Other Links
