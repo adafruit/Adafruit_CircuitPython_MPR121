@@ -12,6 +12,23 @@ CircuitPython driver for the MPR121 capacitive touch breakout board.
 See usage in the examples/simpletest.py file.
 
 * Author(s): Tony DiCola
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* Adafruit `12-Key Capacitive Touch Sensor Breakout - MPR121
+  <https://www.adafruit.com/product/1982>`_ (Product ID: 1982)
+
+* Adafruit `12 x Capacitive Touch Shield for Arduino - MPR121
+  <https://www.adafruit.com/product/2024>`_ (Product ID: 2024)
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
+* Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
 import time
