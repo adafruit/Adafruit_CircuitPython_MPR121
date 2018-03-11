@@ -9,6 +9,10 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
+.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MPR121.svg?branch=master
+    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MPR121
+    :alt: Build Status
+
 Adafruit CircuitPython module for the MPR121 capacitive touch breakout board.
 
 Dependencies
