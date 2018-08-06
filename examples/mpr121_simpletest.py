@@ -3,14 +3,12 @@
 # board are touched.  Open the serial REPL after running to see the output.
 # Author: Tony DiCola
 import time
-
+import board
+import busio
 # Import MPR121 module.
 import adafruit_mpr121
 
-import busio
-
 # Create I2C bus.
-import board
 i2c = busio.I2C(board.SCL, board.SDA)
 
 # Create MPR121 class.
