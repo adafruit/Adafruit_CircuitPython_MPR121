@@ -1,6 +1,7 @@
 # MPR121 piano demo.
 # Listens to the first 7 inputs of the MPR121 and plays a middle scale note
 # when an input is touched.  Note only one note is played at a time!
+# For use with microcontrollers or computers with PWM support only!
 # Author: Tony DiCola
 import time
 
