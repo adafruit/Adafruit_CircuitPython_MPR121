@@ -92,8 +92,8 @@ class MPR121_Channel():
         return self._mpr121.touched() & (1 << self._channel) != 0
 
     @property
-    """The raw touch measurement."""
     def raw_value(self):
+        """The raw touch measurement."""
         return self._mpr121.filtered_data(self._channel)
 
 class MPR121:
