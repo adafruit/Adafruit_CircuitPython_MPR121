@@ -79,6 +79,18 @@ MPR121_ECR             = const(0x5E)
 MPR121_SOFTRESET       = const(0x80)
 # pylint: enable=bad-whitespace
 
+class MPR121_Channel():
+    def __init__(self, mpr121, channel):
+        self._mpr121 = mpr121
+        self._channel = channel
+
+    @property
+    def value(self):
+        return self._mpr121.touched() & (1 << self._channel) != 0
+
+    @property
+    def raw_value(self):
+        return self._mpr121.filtered_data(self._channel)
 
 class MPR121:
     """Driver for the MPR121 capacitive touch breakout board."""
@@ -86,7 +98,20 @@ class MPR121:
     def __init__(self, i2c, address=MPR121_I2CADDR_DEFAULT):
         self._i2c = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
+        self._channels = [None]*12
         self.reset()
+
+    def __getitem__(self, key):
+        if key < 0 or key > 11:
+            raise ValueError('Pin must be a value 0-11.')
+        if self._channels[key] is None:
+            self._channels[key] = MPR121_Channel(self, key)
+        return self._channels[key]
+
+    @property
+    def touched_pins(self):
+        touched = self.touched()
+        return tuple([bool(touched >> i & 0x01) for i in range(12)])
 
     def _write_register_byte(self, register, value):
         # Write a byte value to the specifier register address.
@@ -145,7 +170,7 @@ class MPR121:
         # Set the touch and release register value for all the inputs.
         for i in range(12):
             self._write_register_byte(MPR121_TOUCHTH_0 + 2*i, touch)
-            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, release)
+            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, release)        
 
     def filtered_data(self, pin):
         """Return filtered data register value for the provided pin (0-11).
