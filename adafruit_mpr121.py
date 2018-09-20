@@ -80,15 +80,19 @@ MPR121_SOFTRESET       = const(0x80)
 # pylint: enable=bad-whitespace
 
 class MPR121_Channel():
+    """Helper class to represent a touch channel on the MPR121. Not meant to
+    be used directly."""
     def __init__(self, mpr121, channel):
         self._mpr121 = mpr121
         self._channel = channel
 
     @property
     def value(self):
+        """Whether the touch pad is being touched or not."""
         return self._mpr121.touched() & (1 << self._channel) != 0
 
     @property
+    """The raw touch measurement."""
     def raw_value(self):
         return self._mpr121.filtered_data(self._channel)
 
@@ -110,6 +114,7 @@ class MPR121:
 
     @property
     def touched_pins(self):
+        """A tuple of touched state for all pins."""
         touched = self.touched()
         return tuple([bool(touched >> i & 0x01) for i in range(12)])
 
