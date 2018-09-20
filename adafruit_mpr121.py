@@ -170,7 +170,7 @@ class MPR121:
         # Set the touch and release register value for all the inputs.
         for i in range(12):
             self._write_register_byte(MPR121_TOUCHTH_0 + 2*i, touch)
-            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, release)        
+            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, release)
 
     def filtered_data(self, pin):
         """Return filtered data register value for the provided pin (0-11).
