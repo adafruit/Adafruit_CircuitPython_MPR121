@@ -107,7 +107,7 @@ class MPR121:
 
     def __getitem__(self, key):
         if key < 0 or key > 11:
-            raise ValueError('Pin must be a value 0-11.')
+            raise IndexError('Pin must be a value 0-11.')
         if self._channels[key] is None:
             self._channels[key] = MPR121_Channel(self, key)
         return self._channels[key]
