@@ -22,6 +22,6 @@ while True:
     for i in range(12):
         # Call is_touched and pass it then number of the input.  If it's touched
         # it will return True, otherwise it will return False.
-        if mpr121.is_touched(i):
+        if mpr121[i].value:
             print('Input {} touched!'.format(i))
     time.sleep(0.25)  # Small delay to keep from spamming output messages.
