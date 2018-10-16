@@ -3,7 +3,7 @@
 # when an input is touched.  Note only one note is played at a time!
 # For use with microcontrollers or computers with PWM support only!
 # Author: Tony DiCola
-import time
+# Modified by: Carter Nelson
 
 import board
 import busio
@@ -43,31 +43,19 @@ mpr121 = adafruit_mpr121.MPR121(i2c)
 buzzer = pulseio.PWMOut(BUZZER_PIN, duty_cycle=TONE_OFF_DUTY, frequency=440,
                         variable_frequency=True)
 
-# Main loop.
-# First grab an initial touch state for all of the inputs.  The touched()
-# function can quickly get the state of all input pins and returns them as a
-# 12-bit value with a bit set to 1 for each appropriate input (i.e. bit 0 is
-# input 0, bit 1 is input 1, etc.)
-last = mpr121.touched()
+last_note = None
 while True:
-    # Every loop iteration get an updated touch state and look to see if it
-    # changed since the last iteration.
-    current = mpr121.touched()
-    if last != current:
-        # Some pin changed, turn off playback and look for any touched pins.
+    # Get touched state for all pins
+    touched = mpr121.touched_pins
+    # If no pins are touched, be quiet
+    if True not in touched:
+        last_note = None
         buzzer.duty_cycle = TONE_OFF_DUTY
-        # Loop through all 12 inputs (0-11) and look at their bits in the
-        # current touch state.  A bit that's set is touched!
-        for i in range(12):
-            if (1 << i) & current > 0:
-                print('Input {} touched!'.format(i))
-                # Grab the frequency for the associated pin and check that it's
-                # not zero (unused).
-                freq = NOTE_FREQS[i]
-                if freq != 0:
-                    # Pin with a specified frequency was touched, play the tone!
-                    buzzer.frequency = NOTE_FREQS[i]
-                    buzzer.duty_cycle = TONE_ON_DUTY
-    # Update touch state and delay a bit before next loop iteration.
-    last = current
-    time.sleep(0.01)
+        continue
+    # Get index of touched pin
+    note = touched.index(True)
+    # Play note if pin is different and has a defined note
+    if note != last_note and NOTE_FREQS[note] != 0:
+        last_note = note
+        buzzer.frequency = NOTE_FREQS[note]
+        buzzer.duty_cycle = TONE_ON_DUTY
