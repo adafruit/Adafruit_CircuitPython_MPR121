@@ -4,7 +4,6 @@
 # For use with microcontrollers or computers with PWM support only!
 # Author: Tony DiCola
 # Modified by: Carter Nelson
-import time
 
 import board
 import busio
