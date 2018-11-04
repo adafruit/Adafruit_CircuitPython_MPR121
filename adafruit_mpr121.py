@@ -120,8 +120,16 @@ class MPR121:
 
     def _write_register_byte(self, register, value):
         # Write a byte value to the specifier register address.
+        # MPR121 must be put in Stop Mode to write to most registers
+        stop_required = True
+        if register == MPR121_ECR or 0x73 <= register <= 0x7A:
+            stop_required = False
         with self._i2c:
+            if stop_required:
+                self._i2c.write(bytes([MPR121_ECR, 0x00]))
             self._i2c.write(bytes([register, value]))
+            if stop_required:
+                self._i2c.write(bytes([MPR121_ECR, 0x8F]))
 
     def _read_register_bytes(self, register, result, length=None):
         # Read the specified register address and fill the specified result byte
