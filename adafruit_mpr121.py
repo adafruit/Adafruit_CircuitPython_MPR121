@@ -80,6 +80,7 @@ MPR121_SOFTRESET       = const(0x80)
 # pylint: enable=bad-whitespace
 
 class MPR121_Channel():
+    # pylint: disable=protected-access
     """Helper class to represent a touch channel on the MPR121. Not meant to
     be used directly."""
     def __init__(self, mpr121, channel):
@@ -107,7 +108,7 @@ class MPR121_Channel():
     def thresholds(self, value):
         touch, release = value
         self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2*self._channel, touch)
-        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2*self._channel, release)                
+        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2*self._channel, release)
 
 class MPR121:
     """Driver for the MPR121 capacitive touch breakout board."""
@@ -136,13 +137,13 @@ class MPR121:
         """The touch / release threholds for all channels."""
         buf = bytearray(24)
         self._read_register_bytes(MPR121_TOUCHTH_0, buf, 24)
-        return tuple( [ (buf[2*i], buf[2*i+1]) for i in range(12) ] )
+        return tuple([(buf[2*i], buf[2*i+1]) for i in range(12)])
 
     @thresholds.setter
     def thresholds(self, value):
         touch, release = value
         self.set_thresholds(touch, release)
-        
+
     def _write_register_byte(self, register, value):
         # Write a byte value to the specifier register address.
         # MPR121 must be put in Stop Mode to write to most registers
