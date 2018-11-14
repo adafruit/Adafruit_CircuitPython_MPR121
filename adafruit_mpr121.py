@@ -112,14 +112,16 @@ class MPR121_Channel():
 
     @property
     def threshold(self):
+        """The touch threhold."""
         return self.thresholds[0]
 
     @threshold.setter
     def threshold(self, value):
         self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2*self._channel, value)
-    
+
     @property
     def release_threshold(self):
+        """The release threhold."""
         return self.thresholds[1]
 
     @release_threshold.setter
