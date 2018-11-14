@@ -102,13 +102,30 @@ class MPR121_Channel():
         """The touch / release threholds."""
         buf = bytearray(2)
         self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2*self._channel, buf, 2)
-        return (buf[0], buf[1])
+        return buf[0], buf[1]
 
     @thresholds.setter
     def thresholds(self, value):
         touch, release = value
         self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2*self._channel, touch)
         self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2*self._channel, release)
+
+    @property
+    def threshold(self):
+        return self.thresholds[0]
+
+    @threshold.setter
+    def threshold(self, value):
+        self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2*self._channel, value)
+    
+    @property
+    def release_threshold(self):
+        return self.thresholds[1]
+
+    @release_threshold.setter
+    def release_threshold(self, value):
+        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2*self._channel, value)
+
 
 class MPR121:
     """Driver for the MPR121 capacitive touch breakout board."""
@@ -131,18 +148,6 @@ class MPR121:
         """A tuple of touched state for all pins."""
         touched = self.touched()
         return tuple([bool(touched >> i & 0x01) for i in range(12)])
-
-    @property
-    def thresholds(self):
-        """The touch / release threholds for all channels."""
-        buf = bytearray(24)
-        self._read_register_bytes(MPR121_TOUCHTH_0, buf, 24)
-        return tuple([(buf[2*i], buf[2*i+1]) for i in range(12)])
-
-    @thresholds.setter
-    def thresholds(self, value):
-        touch, release = value
-        self.set_thresholds(touch, release)
 
     def _write_register_byte(self, register, value):
         # Write a byte value to the specifier register address.
