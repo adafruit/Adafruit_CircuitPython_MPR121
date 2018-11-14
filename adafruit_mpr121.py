@@ -99,7 +99,7 @@ class MPR121_Channel():
 
     @property
     def thresholds(self):
-        """The touch / release threholds."""
+        """The touch / release thresholds."""
         buf = bytearray(2)
         self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2*self._channel, buf, 2)
         return buf[0], buf[1]
@@ -112,7 +112,7 @@ class MPR121_Channel():
 
     @property
     def threshold(self):
-        """The touch threhold."""
+        """The touch threshold."""
         return self.thresholds[0]
 
     @threshold.setter
@@ -121,7 +121,7 @@ class MPR121_Channel():
 
     @property
     def release_threshold(self):
-        """The release threhold."""
+        """The release threshold."""
         return self.thresholds[1]
 
     @release_threshold.setter
