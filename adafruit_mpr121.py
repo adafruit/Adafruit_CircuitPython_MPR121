@@ -98,22 +98,11 @@ class MPR121_Channel():
         return self._mpr121.filtered_data(self._channel)
 
     @property
-    def thresholds(self):
-        """The touch / release thresholds."""
-        buf = bytearray(2)
-        self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2*self._channel, buf, 2)
-        return buf[0], buf[1]
-
-    @thresholds.setter
-    def thresholds(self, value):
-        touch, release = value
-        self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2*self._channel, touch)
-        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2*self._channel, release)
-
-    @property
     def threshold(self):
         """The touch threshold."""
-        return self.thresholds[0]
+        buf = bytearray(1)
+        self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2*self._channel, buf, 1)
+        return buf[0]
 
     @threshold.setter
     def threshold(self, value):
@@ -122,7 +111,9 @@ class MPR121_Channel():
     @property
     def release_threshold(self):
         """The release threshold."""
-        return self.thresholds[1]
+        buf = bytearray(1)
+        self._mpr121._read_register_bytes(MPR121_RELEASETH_0 + 2*self._channel, buf, 1)
+        return buf[0]
 
     @release_threshold.setter
     def release_threshold(self, value):
@@ -186,7 +177,10 @@ class MPR121:
         self._read_register_bytes(MPR121_CONFIG2, self._buffer, 1)
         if self._buffer[0] != 0x24:
             raise RuntimeError('Failed to find MPR121 in expected config state!')
-        self.set_thresholds(12, 6)
+        # Default touch and release thresholds
+        for i in range(12):
+            self._write_register_byte(MPR121_TOUCHTH_0 + 2*i, 12)
+            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, 6)
         # Configure baseline filtering control registers.
         self._write_register_byte(MPR121_MHDR, 0x01)
         self._write_register_byte(MPR121_NHDR, 0x01)
@@ -205,18 +199,6 @@ class MPR121:
         self._write_register_byte(MPR121_CONFIG2, 0x20) # 0.5uS encoding, 1ms period
         # Enable all electrodes.
         self._write_register_byte(MPR121_ECR, 0x8F) # start with first 5 bits of baseline tracking
-
-    def set_thresholds(self, touch, release):
-        """Set the touch and release threshold for all inputs to the provided
-        values.  Both touch and release should be a value between 0 to 255
-        (inclusive).
-        """
-        if touch < 0 or touch > 255 or release < 0 or release > 255:
-            raise ValueError('Touch/release must be a byte value 0-255.')
-        # Set the touch and release register value for all the inputs.
-        for i in range(12):
-            self._write_register_byte(MPR121_TOUCHTH_0 + 2*i, touch)
-            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, release)
 
     def filtered_data(self, pin):
         """Return filtered data register value for the provided pin (0-11).
