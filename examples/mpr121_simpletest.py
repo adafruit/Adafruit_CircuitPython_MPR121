@@ -11,8 +11,9 @@ import adafruit_mpr121
 # Create I2C bus.
 i2c = busio.I2C(board.SCL, board.SDA)
 
-# Create MPR121 class.
+# Create MPR121 object.
 mpr121 = adafruit_mpr121.MPR121(i2c)
+
 # Note you can optionally change the address of the device:
 #mpr121 = adafruit_mpr121.MPR121(i2c, address=0x91)
 
