@@ -92,7 +92,7 @@ KEY_MAPPING = {
 EVENT_WAIT_SLEEP_SECONDS = 0.25
 
 # Uncomment to enable debug message logging (might slow down key detection).
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 # Make sure uinput kernel module is loaded.
 subprocess.check_call(['modprobe', 'uinput'])
