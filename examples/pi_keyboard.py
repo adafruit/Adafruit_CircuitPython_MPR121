@@ -57,27 +57,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import adafruit_mpr121
-import board
-import busio
 import logging
 import subprocess
 import time
+import board
+import busio
 import uinput
+import adafruit_mpr121
 
 # Define mapping of capacitive touch pin presses to keyboard button presses.
-KEY_MAPPING = {
-                0: uinput.KEY_UP,    # Each line here should define a dict entry
-                1: uinput.KEY_DOWN,  # that maps the capacitive touch input number
-                2: uinput.KEY_LEFT,  # to an appropriate key press.
-                3: uinput.KEY_RIGHT, #
-                4: uinput.KEY_B,     # For reference the list of possible uinput.KEY_*
-                5: uinput.KEY_A,     # values you can specify is defined in linux/input.h:
-                6: uinput.KEY_ENTER, # http://www.cs.fsu.edu/~baker/devices/lxr/http/source/linux/include/linux/input.h?v=2.6.11.8
-                7: uinput.KEY_SPACE, #
-              }                      # Make sure a cap touch input is defined only
-                                     # once or else the program will fail to run!
 
+# Each line here should define a dict entry that maps the capacitive touch
+# input number to an appropriate key press.
+#
+# For reference the list of possible uinput.KEY_* values you can specify is
+# defined in linux/input.h:
+# http://www.cs.fsu.edu/~baker/devices/lxr/http/source/linux/include/linux/input.h?v=2.6.11.8
+#
+# Make sure a cap touch input is defined only once or else the program will
+# fail to run!
+
+KEY_MAPPING = {
+    0: uinput.KEY_UP,
+    1: uinput.KEY_DOWN,
+    2: uinput.KEY_LEFT,
+    3: uinput.KEY_RIGHT,
+    4: uinput.KEY_B,
+    5: uinput.KEY_A,
+    6: uinput.KEY_ENTER,
+    7: uinput.KEY_SPACE,
+}
+
+# Sleep this long between polling for events:
 EVENT_WAIT_SLEEP_SECONDS = 0.25
 
 # Uncomment to enable debug message logging (might slow down key detection).
@@ -103,7 +114,7 @@ while True:
         # Call is_touched and pass it then number of the input.  If it's touched
         # it will return True, otherwise it will return False.
         if mpr121[pin].value:
-            logging.debug('Input {0} touched!'.format(pin))
-            logging.debug('Key: {}'.format(key))
+            logging.debug('Input %i touched!', pin)
+            logging.debug('Key: %s', key)
             device.emit_click(key)
     time.sleep(EVENT_WAIT_SLEEP_SECONDS)  # Small delay to keep from spamming output messages.
