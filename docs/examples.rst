@@ -7,6 +7,6 @@ Ensure your device works with this simple test.
     :caption: examples/mpr121_simpletest.py
     :linenos:
 
-.. literalinclude:: ../examples/piano.py
-    :caption: examples/piano.py
+.. literalinclude:: ../examples/mpr121_piano.py
+    :caption: examples/mpr121_piano.py
     :linenos:
