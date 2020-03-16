@@ -95,7 +95,7 @@ EVENT_WAIT_SLEEP_SECONDS = 0.25
 # logging.basicConfig(level=logging.DEBUG)
 
 # Make sure uinput kernel module is loaded.
-subprocess.check_call(['modprobe', 'uinput'])
+subprocess.check_call(["modprobe", "uinput"])
 
 # Configure virtual keyboard.
 device = uinput.Device(KEY_MAPPING.values())
@@ -107,14 +107,16 @@ i2c = busio.I2C(board.SCL, board.SDA)
 mpr121 = adafruit_mpr121.MPR121(i2c)
 
 # Event loop to wait for pin changes and respond to them.
-print('Press Ctrl-C to quit.')
+print("Press Ctrl-C to quit.")
 while True:
     # Loop through all defined inputs:
     for pin, key in KEY_MAPPING.items():
         # Call is_touched and pass it then number of the input.  If it's touched
         # it will return True, otherwise it will return False.
         if mpr121[pin].value:
-            logging.debug('Input %i touched!', pin)
-            logging.debug('Key: %s', key)
+            logging.debug("Input %i touched!", pin)
+            logging.debug("Key: %s", key)
             device.emit_click(key)
-    time.sleep(EVENT_WAIT_SLEEP_SECONDS)  # Small delay to keep from spamming output messages.
+    time.sleep(
+        EVENT_WAIT_SLEEP_SECONDS
+    )  # Small delay to keep from spamming output messages.

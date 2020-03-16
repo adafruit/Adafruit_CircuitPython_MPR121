@@ -42,47 +42,49 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MPR121.git"
 # Register addresses.  Unused registers commented out to save memory.
 # pylint: disable=bad-whitespace
 MPR121_I2CADDR_DEFAULT = const(0x5A)
-MPR121_TOUCHSTATUS_L   = const(0x00)
-#MPR121_TOUCHSTATUS_H   = const(0x01)
-MPR121_FILTDATA_0L     = const(0x04)
-#MPR121_FILTDATA_0H     = const(0x05)
-MPR121_BASELINE_0      = const(0x1E)
-MPR121_MHDR            = const(0x2B)
-MPR121_NHDR            = const(0x2C)
-MPR121_NCLR            = const(0x2D)
-MPR121_FDLR            = const(0x2E)
-MPR121_MHDF            = const(0x2F)
-MPR121_NHDF            = const(0x30)
-MPR121_NCLF            = const(0x31)
-MPR121_FDLF            = const(0x32)
-MPR121_NHDT            = const(0x33)
-MPR121_NCLT            = const(0x34)
-MPR121_FDLT            = const(0x35)
-MPR121_TOUCHTH_0       = const(0x41)
-MPR121_RELEASETH_0     = const(0x42)
-MPR121_DEBOUNCE        = const(0x5B)
-MPR121_CONFIG1         = const(0x5C)
-MPR121_CONFIG2         = const(0x5D)
-#MPR121_CHARGECURR_0    = const(0x5F)
-#MPR121_CHARGETIME_1    = const(0x6C)
-MPR121_ECR             = const(0x5E)
-#MPR121_AUTOCONFIG0     = const(0x7B)
-#MPR121_AUTOCONFIG1     = const(0x7C)
-#MPR121_UPLIMIT         = const(0x7D)
-#MPR121_LOWLIMIT        = const(0x7E)
-#MPR121_TARGETLIMIT     = const(0x7F)
-#MPR121_GPIODIR         = const(0x76)
-#MPR121_GPIOEN          = const(0x77)
-#MPR121_GPIOSET         = const(0x78)
-#MPR121_GPIOCLR         = const(0x79)
-#MPR121_GPIOTOGGLE      = const(0x7A)
-MPR121_SOFTRESET       = const(0x80)
+MPR121_TOUCHSTATUS_L = const(0x00)
+# MPR121_TOUCHSTATUS_H   = const(0x01)
+MPR121_FILTDATA_0L = const(0x04)
+# MPR121_FILTDATA_0H     = const(0x05)
+MPR121_BASELINE_0 = const(0x1E)
+MPR121_MHDR = const(0x2B)
+MPR121_NHDR = const(0x2C)
+MPR121_NCLR = const(0x2D)
+MPR121_FDLR = const(0x2E)
+MPR121_MHDF = const(0x2F)
+MPR121_NHDF = const(0x30)
+MPR121_NCLF = const(0x31)
+MPR121_FDLF = const(0x32)
+MPR121_NHDT = const(0x33)
+MPR121_NCLT = const(0x34)
+MPR121_FDLT = const(0x35)
+MPR121_TOUCHTH_0 = const(0x41)
+MPR121_RELEASETH_0 = const(0x42)
+MPR121_DEBOUNCE = const(0x5B)
+MPR121_CONFIG1 = const(0x5C)
+MPR121_CONFIG2 = const(0x5D)
+# MPR121_CHARGECURR_0    = const(0x5F)
+# MPR121_CHARGETIME_1    = const(0x6C)
+MPR121_ECR = const(0x5E)
+# MPR121_AUTOCONFIG0     = const(0x7B)
+# MPR121_AUTOCONFIG1     = const(0x7C)
+# MPR121_UPLIMIT         = const(0x7D)
+# MPR121_LOWLIMIT        = const(0x7E)
+# MPR121_TARGETLIMIT     = const(0x7F)
+# MPR121_GPIODIR         = const(0x76)
+# MPR121_GPIOEN          = const(0x77)
+# MPR121_GPIOSET         = const(0x78)
+# MPR121_GPIOCLR         = const(0x79)
+# MPR121_GPIOTOGGLE      = const(0x7A)
+MPR121_SOFTRESET = const(0x80)
 # pylint: enable=bad-whitespace
 
-class MPR121_Channel():
+
+class MPR121_Channel:
     # pylint: disable=protected-access
     """Helper class to represent a touch channel on the MPR121. Not meant to
     be used directly."""
+
     def __init__(self, mpr121, channel):
         self._mpr121 = mpr121
         self._channel = channel
@@ -101,23 +103,25 @@ class MPR121_Channel():
     def threshold(self):
         """The touch threshold."""
         buf = bytearray(1)
-        self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2*self._channel, buf, 1)
+        self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2 * self._channel, buf, 1)
         return buf[0]
 
     @threshold.setter
     def threshold(self, value):
-        self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2*self._channel, value)
+        self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2 * self._channel, value)
 
     @property
     def release_threshold(self):
         """The release threshold."""
         buf = bytearray(1)
-        self._mpr121._read_register_bytes(MPR121_RELEASETH_0 + 2*self._channel, buf, 1)
+        self._mpr121._read_register_bytes(
+            MPR121_RELEASETH_0 + 2 * self._channel, buf, 1
+        )
         return buf[0]
 
     @release_threshold.setter
     def release_threshold(self, value):
-        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2*self._channel, value)
+        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2 * self._channel, value)
 
 
 class MPR121:
@@ -126,12 +130,12 @@ class MPR121:
     def __init__(self, i2c, address=MPR121_I2CADDR_DEFAULT):
         self._i2c = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
-        self._channels = [None]*12
+        self._channels = [None] * 12
         self.reset()
 
     def __getitem__(self, key):
         if key < 0 or key > 11:
-            raise IndexError('Pin must be a value 0-11.')
+            raise IndexError("Pin must be a value 0-11.")
         if self._channels[key] is None:
             self._channels[key] = MPR121_Channel(self, key)
         return self._channels[key]
@@ -169,17 +173,19 @@ class MPR121:
         """
         # Write to the reset register.
         self._write_register_byte(MPR121_SOFTRESET, 0x63)
-        time.sleep(0.001) # This 1ms delay here probably isn't necessary but can't hurt.
+        time.sleep(
+            0.001
+        )  # This 1ms delay here probably isn't necessary but can't hurt.
         # Set electrode configuration to default values.
         self._write_register_byte(MPR121_ECR, 0x00)
         # Check CDT, SFI, ESI configuration is at default values.
         self._read_register_bytes(MPR121_CONFIG2, self._buffer, 1)
         if self._buffer[0] != 0x24:
-            raise RuntimeError('Failed to find MPR121 in expected config state!')
+            raise RuntimeError("Failed to find MPR121 in expected config state!")
         # Default touch and release thresholds
         for i in range(12):
-            self._write_register_byte(MPR121_TOUCHTH_0 + 2*i, 12)
-            self._write_register_byte(MPR121_RELEASETH_0 + 2*i, 6)
+            self._write_register_byte(MPR121_TOUCHTH_0 + 2 * i, 12)
+            self._write_register_byte(MPR121_RELEASETH_0 + 2 * i, 6)
         # Configure baseline filtering control registers.
         self._write_register_byte(MPR121_MHDR, 0x01)
         self._write_register_byte(MPR121_NHDR, 0x01)
@@ -194,18 +200,20 @@ class MPR121:
         self._write_register_byte(MPR121_FDLT, 0x00)
         # Set other configuration registers.
         self._write_register_byte(MPR121_DEBOUNCE, 0)
-        self._write_register_byte(MPR121_CONFIG1, 0x10) # default, 16uA charge current
-        self._write_register_byte(MPR121_CONFIG2, 0x20) # 0.5uS encoding, 1ms period
+        self._write_register_byte(MPR121_CONFIG1, 0x10)  # default, 16uA charge current
+        self._write_register_byte(MPR121_CONFIG2, 0x20)  # 0.5uS encoding, 1ms period
         # Enable all electrodes.
-        self._write_register_byte(MPR121_ECR, 0x8F) # start with first 5 bits of baseline tracking
+        self._write_register_byte(
+            MPR121_ECR, 0x8F
+        )  # start with first 5 bits of baseline tracking
 
     def filtered_data(self, pin):
         """Return filtered data register value for the provided pin (0-11).
         Useful for debugging.
         """
         if pin < 0 or pin > 11:
-            raise ValueError('Pin must be a value 0-11.')
-        self._read_register_bytes(MPR121_FILTDATA_0L + pin*2, self._buffer)
+            raise ValueError("Pin must be a value 0-11.")
+        self._read_register_bytes(MPR121_FILTDATA_0L + pin * 2, self._buffer)
         return ((self._buffer[1] << 8) | (self._buffer[0])) & 0xFFFF
 
     def baseline_data(self, pin):
@@ -213,7 +221,7 @@ class MPR121:
         Useful for debugging.
         """
         if pin < 0 or pin > 11:
-            raise ValueError('Pin must be a value 0-11.')
+            raise ValueError("Pin must be a value 0-11.")
         self._read_register_bytes(MPR121_BASELINE_0 + pin, self._buffer, 1)
         return self._buffer[0] << 2
 
@@ -229,6 +237,6 @@ class MPR121:
         False.
         """
         if pin < 0 or pin > 11:
-            raise ValueError('Pin must be a value 0-11.')
+            raise ValueError("Pin must be a value 0-11.")
         touches = self.touched()
         return (touches & (1 << pin)) > 0
