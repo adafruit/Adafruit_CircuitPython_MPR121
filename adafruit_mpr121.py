@@ -40,7 +40,6 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MPR121.git"
 
 # Register addresses.  Unused registers commented out to save memory.
-# pylint: disable=bad-whitespace
 MPR121_I2CADDR_DEFAULT = const(0x5A)
 MPR121_TOUCHSTATUS_L = const(0x00)
 # MPR121_TOUCHSTATUS_H   = const(0x01)
@@ -77,7 +76,6 @@ MPR121_ECR = const(0x5E)
 # MPR121_GPIOCLR         = const(0x79)
 # MPR121_GPIOTOGGLE      = const(0x7A)
 MPR121_SOFTRESET = const(0x80)
-# pylint: enable=bad-whitespace
 
 
 class MPR121_Channel:
