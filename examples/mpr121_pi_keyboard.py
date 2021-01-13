@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 #!/usr/bin/env python3
 
 # Adafruit Raspberry Pi MPR121 Keyboard Example

@@ -1,7 +1,6 @@
-# MPR121 capacitive touch breakout driver.  Port of Raspberry Pi/BeagleBone Black
-# code from: https://github.com/adafruit/Adafruit_Python_MPR121/
-# Author: Tony DiCola
-# License: MIT License (https://opensource.org/licenses/MIT)
+# SPDX-FileCopyrightText: 2017 Tony DiCola for Adafruit Industries
+#
+# SPDX-License-Identifier: MIT
 
 """
 `adafruit_mpr121`
@@ -167,8 +166,7 @@ class MPR121:
             self._i2c.write_then_readinto(bytes([register]), result, in_end=length)
 
     def reset(self):
-        """Reset the MPR121 into a default state ready to detect touch inputs.
-        """
+        """Reset the MPR121 into a default state ready to detect touch inputs."""
         # Write to the reset register.
         self._write_register_byte(MPR121_SOFTRESET, 0x63)
         time.sleep(
