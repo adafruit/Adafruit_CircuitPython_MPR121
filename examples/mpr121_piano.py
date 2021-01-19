@@ -1,12 +1,11 @@
-# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-FileCopyrightText: 2017 Tony DiCola, Carter Nelson for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
 # MPR121 piano demo.
 # Listens to the first 7 inputs of the MPR121 and plays a middle scale note
 # when an input is touched.  Note only one note is played at a time!
 # For use with microcontrollers or computers with PWM support only!
-# Author: Tony DiCola
-# Modified by: Carter Nelson
+
 
 import board
 import busio

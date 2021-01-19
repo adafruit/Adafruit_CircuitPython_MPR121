@@ -1,10 +1,9 @@
-# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-FileCopyrightText: 2019 Tony DiCola, Brennen Bearnes for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
 #!/usr/bin/env python3
 
 # Adafruit Raspberry Pi MPR121 Keyboard Example
-# Author: Tony DiCola, Brennen Bearnes
 #
 # Allows you to turn touches detected by the MPR121 into key presses on a
 # Raspberry Pi.
