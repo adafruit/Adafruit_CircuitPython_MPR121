@@ -9,7 +9,7 @@
 
 import board
 import busio
-import pulseio
+import pwmio
 
 # Import MPR121 module.
 import adafruit_mpr121
@@ -45,7 +45,7 @@ mpr121 = adafruit_mpr121.MPR121(i2c)
 
 # pylint: disable-msg=no-member
 # Setup buzzer PWM output.
-buzzer = pulseio.PWMOut(
+buzzer = pwmio.PWMOut(
     BUZZER_PIN, duty_cycle=TONE_OFF_DUTY, frequency=440, variable_frequency=True
 )
 # pylint: disable-msg=no-member
