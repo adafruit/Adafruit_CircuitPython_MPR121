@@ -141,7 +141,7 @@ class MPR121:
     def touched_pins(self):
         """A tuple of touched state for all pins."""
         touched = self.touched()
-        return tuple([bool(touched >> i & 0x01) for i in range(12)])
+        return tuple(bool(touched >> i & 1) for i in range(12))
 
     def _write_register_byte(self, register, value):
         # Write a byte value to the specifier register address.
