@@ -56,6 +56,11 @@ Usage Example
 
 See usage in the examples/mpr121_simpletest.py file.
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/mpr121/en/latest/>`_.
+
 Contributing
 ============
 
