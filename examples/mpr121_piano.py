@@ -17,7 +17,7 @@ import adafruit_mpr121
 
 # Configure PWM buzzer and other state:
 BUZZER_PIN = board.D9
-TONE_ON_DUTY = 2 ** 15  # Duty cycle of tone when turned on, a square wave.
+TONE_ON_DUTY = 2**15  # Duty cycle of tone when turned on, a square wave.
 TONE_OFF_DUTY = 0  # Duty cycle of tone when turned off, 0 or no signal.
 NOTE_FREQS = [
     261,  # Input 0 = 261 hz = middle C
