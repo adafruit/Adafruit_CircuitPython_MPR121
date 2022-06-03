@@ -306,7 +306,7 @@ class MPR121:
         return ((self._buffer[1] << 8) | (self._buffer[0])) & 0xFFFF
 
     def is_touched(self, pin: int) -> bool:
-        """Get if the ``pin`` is being touched.
+        """Get if ``pin`` is being touched.
 
         Returns:
             True if ``pin`` is being touched; otherwise False.
