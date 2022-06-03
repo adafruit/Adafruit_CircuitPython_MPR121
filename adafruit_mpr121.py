@@ -310,6 +310,9 @@ class MPR121:
 
         Returns:
             True if ``pin`` is being touched; otherwise False.
+
+        Raises:
+            ValueError: Argument ``pin`` is invalid.
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
