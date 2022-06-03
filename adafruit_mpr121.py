@@ -35,9 +35,12 @@ from __future__ import annotations
 import time
 
 try:
-    from typing import Optional, Tuple
+    from typing import List, Optional, Tuple
 except ImportError:
     # typing module does not exist in CircuitPython
+    class List(list):
+        """Typing hint indicating a list."""
+
     # pylint: disable=too-few-public-methods
     class Optional:
         """Typing hint alias of ``Union[Any, None]``."""
@@ -153,6 +156,10 @@ class MPR121_Channel:
 
 class MPR121:
     """Driver for the MPR121 capacitive touch breakout board."""
+
+    _i2c: i2c_device.I2CDevice
+    _buffer: bytearray
+    _channels: List[Optional[MPR121_Channel]]
 
     def __init__(self, i2c: busio.I2C, address=MPR121_I2CADDR_DEFAULT) -> None:
         """Creates a new ``MPR121`` isntance.
