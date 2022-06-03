@@ -33,7 +33,18 @@ Implementation Notes
 from __future__ import annotations
 
 import time
-from typing import Optional, Tuple
+
+try:
+    from typing import Optional, Tuple
+except ImportError:
+    # typing module does not exist in CircuitPython
+    # pylint: disable=too-few-public-methods
+    class Optional:
+        """Typing hint alias of ``Union[Any, None]``."""
+
+    class Tuple(tuple):
+        """Typing hint indicating a tuple."""
+
 
 import busio
 from adafruit_bus_device import i2c_device
