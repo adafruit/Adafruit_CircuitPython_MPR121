@@ -154,7 +154,7 @@ class MPR121:
     _channels: List[Optional[MPR121_Channel]]
 
     def __init__(self, i2c: busio.I2C, address: int = MPR121_I2CADDR_DEFAULT) -> None:
-        """Creates a new ``MPR121`` isntance.
+        """Creates a new ``MPR121`` instance.
 
         Args:
             i2c: An I2C driver.
