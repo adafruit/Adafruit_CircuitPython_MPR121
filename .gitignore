@@ -28,8 +28,6 @@
 # Python-specific files
 __pycache__
 *.pyc
-build
-.eggs
 
 # Sphinx build-specific files
 _build
