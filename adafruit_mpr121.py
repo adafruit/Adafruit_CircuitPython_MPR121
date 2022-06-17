@@ -30,8 +30,6 @@ Implementation Notes
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
-from __future__ import annotations
-
 import time
 
 try:
@@ -94,10 +92,10 @@ class MPR121_Channel:
     Not meant to be used directly.
     """
 
-    _mpr121: MPR121
+    _mpr121: "MPR121"
     _channel: int
 
-    def __init__(self, mpr121: MPR121, channel: int) -> None:
+    def __init__(self, mpr121: "MPR121", channel: int) -> None:
         """Creates a new ``MPR121_Channel`` instance.
 
         :param mpr121: An instance of the touch sensor driver.
