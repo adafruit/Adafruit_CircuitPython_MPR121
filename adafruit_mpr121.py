@@ -100,9 +100,8 @@ class MPR121_Channel:
     def __init__(self, mpr121: MPR121, channel: int) -> None:
         """Creates a new ``MPR121_Channel`` instance.
 
-        Args:
-            mpr121: An instance of the touch sensor driver.
-            channel: The channel this instance represents (0-11).
+        :param mpr121: An instance of the touch sensor driver.
+        :param channel: The channel this instance represents (0-11).
         """
         self._mpr121 = mpr121
         self._channel = channel
@@ -156,9 +155,10 @@ class MPR121:
     def __init__(self, i2c: busio.I2C, address: int = MPR121_I2CADDR_DEFAULT) -> None:
         """Creates a new ``MPR121`` instance.
 
-        Args:
-            i2c: An I2C driver.
-            address: The address of the touch sensor (0x5A - 0x5D).
+        :param i2c: An I2C driver.
+        :type i2c: class:`busio.I2C`
+        :param address: The address of the touch sensor (0x5A - 0x5D).
+        :type address: int
         """
         self._i2c = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
@@ -167,7 +167,7 @@ class MPR121:
 
     def __getitem__(self, key: int) -> MPR121_Channel:
         if key < 0 or key > 11:
-            raise IndexError("pin must be a value 0-11.")
+            raise IndexError("pin must be a value 0-11")
         if self._channels[key] is None:
             self._channels[key] = MPR121_Channel(self, key)
         return self._channels[key]
@@ -207,8 +207,7 @@ class MPR121:
 
         All configurations and states previously set are lost.
 
-        Raises:
-            RuntimeError: The sensor is in an invalid config state.
+        :raises RuntimeError: The sensor is in an invalid config state.
         """
         # Write to the reset register.
         self._write_register_byte(MPR121_SOFTRESET, 0x63)
@@ -255,14 +254,13 @@ class MPR121:
     def filtered_data(self, pin: int) -> int:
         """Get the filtered data register value.
 
-        Args:
-            pin: The pin to read (0 - 11).
+        :param pin: The pin to read (0 - 11).
+        :type pin: int
 
-        Returns:
-            The filtered data value stored in the register.
+        :raises ValueError: Argument ``pin`` is invalid.
 
-        Raises:
-            ValueError: Argument ``pin`` is invalid.
+        :return: The filtered data value stored in the register.
+        :rtype: int
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
@@ -272,14 +270,13 @@ class MPR121:
     def baseline_data(self, pin: int) -> int:
         """Get the baseline data register value.
 
-        Args:
-            pin: The pin to read (0 - 11).
+        :param pin: The pin to read (0 - 11).
+        :type pin: int
 
-        Returns:
-            The baseline data value stored in the register.
+        :raises ValueError: Argument ``pin`` is invalid.
 
-        Raises:
-            ValueError: Argument ``pin`` is invalid.
+        :return: The baseline data value stored in the register.
+        :rtype: int
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
@@ -289,10 +286,10 @@ class MPR121:
     def touched(self) -> int:
         """Get the touch state of all pins as a 12-bit value.
 
-        Returns:
-            A 12-bit value representing the touch state of each pin.
-            Each state in the value is represented by either a 1 or 0;
-            touched or not.
+        :return: A 12-bit value representing the touch state of each
+            pin. Each state in the value is represented by either a 1 or
+            0; touched or not.
+        :rtype: int
         """
         self._read_register_bytes(MPR121_TOUCHSTATUS_L, self._buffer)
         return ((self._buffer[1] << 8) | (self._buffer[0])) & 0xFFFF
@@ -300,11 +297,10 @@ class MPR121:
     def is_touched(self, pin: int) -> bool:
         """Get if ``pin`` is being touched.
 
-        Returns:
-            True if ``pin`` is being touched; otherwise False.
+        :raises ValueError: Argument ``pin`` is invalid.
 
-        Raises:
-            ValueError: Argument ``pin`` is invalid.
+        :return: True if ``pin`` is being touched; otherwise False.
+        :rtype: bool
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
