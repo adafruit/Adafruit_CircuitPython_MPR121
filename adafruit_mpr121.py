@@ -32,6 +32,14 @@ Implementation Notes
 
 import time
 
+try:
+    from typing import List, Optional, Tuple
+    import busio
+except ImportError:
+    # typing hint modules not needed or not available in CircuitPython
+    pass
+
+
 from adafruit_bus_device import i2c_device
 from micropython import const
 
@@ -79,37 +87,49 @@ MPR121_SOFTRESET = const(0x80)
 
 class MPR121_Channel:
     # pylint: disable=protected-access
-    """Helper class to represent a touch channel on the MPR121. Not meant to
-    be used directly."""
+    """Represents a single channel on the touch sensor.
 
-    def __init__(self, mpr121, channel):
+    Not meant to be used directly.
+    """
+
+    _mpr121: "MPR121"
+    _channel: int
+
+    def __init__(self, mpr121: "MPR121", channel: int) -> None:
+        """Creates a new ``MPR121_Channel`` instance.
+
+        :param mpr121: An instance of the touch sensor driver.
+        :param channel: The channel this instance represents (0-11).
+        """
         self._mpr121 = mpr121
         self._channel = channel
 
     @property
-    def value(self):
-        """Whether the touch pad is being touched or not."""
+    def value(self) -> bool:
+        """Get whether the touch pad is being touched or not."""
         return self._mpr121.touched() & (1 << self._channel) != 0
 
     @property
-    def raw_value(self):
-        """The raw touch measurement."""
+    def raw_value(self) -> int:
+        """Get the raw touch measurement."""
         return self._mpr121.filtered_data(self._channel)
 
     @property
-    def threshold(self):
-        """The touch threshold."""
+    def threshold(self) -> int:
+        """Get or set the touch threshold."""
         buf = bytearray(1)
         self._mpr121._read_register_bytes(MPR121_TOUCHTH_0 + 2 * self._channel, buf, 1)
         return buf[0]
 
     @threshold.setter
-    def threshold(self, value):
-        self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2 * self._channel, value)
+    def threshold(self, new_thresh: int) -> None:
+        self._mpr121._write_register_byte(
+            MPR121_TOUCHTH_0 + 2 * self._channel, new_thresh
+        )
 
     @property
-    def release_threshold(self):
-        """The release threshold."""
+    def release_threshold(self) -> int:
+        """Get or set the release threshold."""
         buf = bytearray(1)
         self._mpr121._read_register_bytes(
             MPR121_RELEASETH_0 + 2 * self._channel, buf, 1
@@ -117,33 +137,46 @@ class MPR121_Channel:
         return buf[0]
 
     @release_threshold.setter
-    def release_threshold(self, value):
-        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2 * self._channel, value)
+    def release_threshold(self, new_thresh: int) -> None:
+        self._mpr121._write_register_byte(
+            MPR121_RELEASETH_0 + 2 * self._channel, new_thresh
+        )
 
 
 class MPR121:
     """Driver for the MPR121 capacitive touch breakout board."""
 
-    def __init__(self, i2c, address=MPR121_I2CADDR_DEFAULT):
+    _i2c: i2c_device.I2CDevice
+    _buffer: bytearray
+    _channels: List[Optional[MPR121_Channel]]
+
+    def __init__(self, i2c: busio.I2C, address: int = MPR121_I2CADDR_DEFAULT) -> None:
+        """Creates a new ``MPR121`` instance.
+
+        :param i2c: An I2C driver.
+        :type i2c: class:`busio.I2C`
+        :param address: The address of the touch sensor (0x5A - 0x5D).
+        :type address: int
+        """
         self._i2c = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
         self._channels = [None] * 12
         self.reset()
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: int) -> MPR121_Channel:
         if key < 0 or key > 11:
-            raise IndexError("Pin must be a value 0-11.")
+            raise IndexError("pin must be a value 0-11")
         if self._channels[key] is None:
             self._channels[key] = MPR121_Channel(self, key)
         return self._channels[key]
 
     @property
-    def touched_pins(self):
-        """A tuple of touched state for all pins."""
+    def touched_pins(self) -> Tuple[bool]:
+        """Get a tuple of the touched state for all pins."""
         touched = self.touched()
         return tuple(bool(touched >> i & 1) for i in range(12))
 
-    def _write_register_byte(self, register, value):
+    def _write_register_byte(self, register: int, value: int) -> None:
         # Write a byte value to the specifier register address.
         # MPR121 must be put in Stop Mode to write to most registers
         stop_required = True
@@ -156,7 +189,9 @@ class MPR121:
             if stop_required:
                 self._i2c.write(bytes([MPR121_ECR, 0x8F]))
 
-    def _read_register_bytes(self, register, result, length=None):
+    def _read_register_bytes(
+        self, register: int, result: bytearray, length: Optional[int] = None
+    ) -> None:
         # Read the specified register address and fill the specified result byte
         # array with result bytes.  Make sure result buffer is the desired size
         # of data to read.
@@ -165,23 +200,32 @@ class MPR121:
         with self._i2c:
             self._i2c.write_then_readinto(bytes([register]), result, in_end=length)
 
-    def reset(self):
-        """Reset the MPR121 into a default state ready to detect touch inputs."""
+    def reset(self) -> None:
+        """Reset the MPR121 into a default state.
+
+        All configurations and states previously set are lost.
+
+        :raises RuntimeError: The sensor is in an invalid config state.
+        """
         # Write to the reset register.
         self._write_register_byte(MPR121_SOFTRESET, 0x63)
         time.sleep(
             0.001
         )  # This 1ms delay here probably isn't necessary but can't hurt.
+
         # Set electrode configuration to default values.
         self._write_register_byte(MPR121_ECR, 0x00)
+
         # Check CDT, SFI, ESI configuration is at default values.
         self._read_register_bytes(MPR121_CONFIG2, self._buffer, 1)
         if self._buffer[0] != 0x24:
             raise RuntimeError("Failed to find MPR121 in expected config state!")
+
         # Default touch and release thresholds
         for i in range(12):
             self._write_register_byte(MPR121_TOUCHTH_0 + 2 * i, 12)
             self._write_register_byte(MPR121_RELEASETH_0 + 2 * i, 6)
+
         # Configure baseline filtering control registers.
         self._write_register_byte(MPR121_MHDR, 0x01)
         self._write_register_byte(MPR121_NHDR, 0x01)
@@ -194,43 +238,67 @@ class MPR121:
         self._write_register_byte(MPR121_NHDT, 0x00)
         self._write_register_byte(MPR121_NCLT, 0x00)
         self._write_register_byte(MPR121_FDLT, 0x00)
+
         # Set other configuration registers.
         self._write_register_byte(MPR121_DEBOUNCE, 0)
         self._write_register_byte(MPR121_CONFIG1, 0x10)  # default, 16uA charge current
         self._write_register_byte(MPR121_CONFIG2, 0x20)  # 0.5uS encoding, 1ms period
+
         # Enable all electrodes.
         self._write_register_byte(
             MPR121_ECR, 0x8F
         )  # start with first 5 bits of baseline tracking
 
-    def filtered_data(self, pin):
-        """Return filtered data register value for the provided pin (0-11).
-        Useful for debugging.
+    def filtered_data(self, pin: int) -> int:
+        """Get the filtered data register value.
+
+        :param pin: The pin to read (0 - 11).
+        :type pin: int
+
+        :raises ValueError: Argument ``pin`` is invalid.
+
+        :return: The filtered data value stored in the register.
+        :rtype: int
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
         self._read_register_bytes(MPR121_FILTDATA_0L + pin * 2, self._buffer)
         return ((self._buffer[1] << 8) | (self._buffer[0])) & 0xFFFF
 
-    def baseline_data(self, pin):
-        """Return baseline data register value for the provided pin (0-11).
-        Useful for debugging.
+    def baseline_data(self, pin: int) -> int:
+        """Get the baseline data register value.
+
+        :param pin: The pin to read (0 - 11).
+        :type pin: int
+
+        :raises ValueError: Argument ``pin`` is invalid.
+
+        :return: The baseline data value stored in the register.
+        :rtype: int
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
         self._read_register_bytes(MPR121_BASELINE_0 + pin, self._buffer, 1)
         return self._buffer[0] << 2
 
-    def touched(self):
-        """Return touch state of all pins as a 12-bit value where each bit
-        represents a pin, with a value of 1 being touched and 0 not being touched.
+    def touched(self) -> int:
+        """Get the touch state of all pins as a 12-bit value.
+
+        :return: A 12-bit value representing the touch state of each
+            pin. Each state in the value is represented by either a 1 or
+            0; touched or not.
+        :rtype: int
         """
         self._read_register_bytes(MPR121_TOUCHSTATUS_L, self._buffer)
         return ((self._buffer[1] << 8) | (self._buffer[0])) & 0xFFFF
 
-    def is_touched(self, pin):
-        """Return True if the specified pin is being touched, otherwise returns
-        False.
+    def is_touched(self, pin: int) -> bool:
+        """Get if ``pin`` is being touched.
+
+        :raises ValueError: Argument ``pin`` is invalid.
+
+        :return: True if ``pin`` is being touched; otherwise False.
+        :rtype: bool
         """
         if pin < 0 or pin > 11:
             raise ValueError("Pin must be a value 0-11.")
