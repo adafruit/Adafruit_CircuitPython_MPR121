@@ -62,9 +62,11 @@
 import logging
 import subprocess
 import time
+
 import board
 import busio
 import uinput
+
 import adafruit_mpr121
 
 # Define mapping of capacitive touch pin presses to keyboard button presses.
@@ -119,6 +121,4 @@ while True:
             logging.debug("Input %i touched!", pin)
             logging.debug("Key: %s", key)
             device.emit_click(key)
-    time.sleep(
-        EVENT_WAIT_SLEEP_SECONDS
-    )  # Small delay to keep from spamming output messages.
+    time.sleep(EVENT_WAIT_SLEEP_SECONDS)  # Small delay to keep from spamming output messages.

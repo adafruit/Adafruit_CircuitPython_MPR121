@@ -34,6 +34,7 @@ import time
 
 try:
     from typing import List, Optional, Tuple
+
     import busio
 except ImportError:
     # typing hint modules not needed or not available in CircuitPython
@@ -86,7 +87,6 @@ MPR121_SOFTRESET = const(0x80)
 
 
 class MPR121_Channel:
-    # pylint: disable=protected-access
     """Represents a single channel on the touch sensor.
 
     Not meant to be used directly.
@@ -123,24 +123,18 @@ class MPR121_Channel:
 
     @threshold.setter
     def threshold(self, new_thresh: int) -> None:
-        self._mpr121._write_register_byte(
-            MPR121_TOUCHTH_0 + 2 * self._channel, new_thresh
-        )
+        self._mpr121._write_register_byte(MPR121_TOUCHTH_0 + 2 * self._channel, new_thresh)
 
     @property
     def release_threshold(self) -> int:
         """Get or set the release threshold."""
         buf = bytearray(1)
-        self._mpr121._read_register_bytes(
-            MPR121_RELEASETH_0 + 2 * self._channel, buf, 1
-        )
+        self._mpr121._read_register_bytes(MPR121_RELEASETH_0 + 2 * self._channel, buf, 1)
         return buf[0]
 
     @release_threshold.setter
     def release_threshold(self, new_thresh: int) -> None:
-        self._mpr121._write_register_byte(
-            MPR121_RELEASETH_0 + 2 * self._channel, new_thresh
-        )
+        self._mpr121._write_register_byte(MPR121_RELEASETH_0 + 2 * self._channel, new_thresh)
 
 
 class MPR121:
@@ -209,9 +203,7 @@ class MPR121:
         """
         # Write to the reset register.
         self._write_register_byte(MPR121_SOFTRESET, 0x63)
-        time.sleep(
-            0.001
-        )  # This 1ms delay here probably isn't necessary but can't hurt.
+        time.sleep(0.001)  # This 1ms delay here probably isn't necessary but can't hurt.
 
         # Set electrode configuration to default values.
         self._write_register_byte(MPR121_ECR, 0x00)
@@ -245,9 +237,7 @@ class MPR121:
         self._write_register_byte(MPR121_CONFIG2, 0x20)  # 0.5uS encoding, 1ms period
 
         # Enable all electrodes.
-        self._write_register_byte(
-            MPR121_ECR, 0x8F
-        )  # start with first 5 bits of baseline tracking
+        self._write_register_byte(MPR121_ECR, 0x8F)  # start with first 5 bits of baseline tracking
 
     def filtered_data(self, pin: int) -> int:
         """Get the filtered data register value.
