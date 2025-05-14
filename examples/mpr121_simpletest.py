@@ -6,6 +6,7 @@
 # board are touched.  Open the serial REPL after running to see the output.
 # Author: Tony DiCola
 import time
+
 import board
 import busio
 
@@ -28,5 +29,5 @@ while True:
         # Call is_touched and pass it then number of the input.  If it's touched
         # it will return True, otherwise it will return False.
         if mpr121[i].value:
-            print("Input {} touched!".format(i))
+            print(f"Input {i} touched!")
     time.sleep(0.25)  # Small delay to keep from spamming output messages.
